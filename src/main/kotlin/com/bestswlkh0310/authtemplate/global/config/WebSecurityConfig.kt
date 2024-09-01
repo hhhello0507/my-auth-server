@@ -42,12 +42,8 @@ class WebSecurityConfig(
                 .anyRequest().authenticated()
         }
         .exceptionHandling {
-            it.authenticationEntryPoint { _, response, _ ->
-                sender.send(response, HttpStatus.UNAUTHORIZED)
-            }
-            it.accessDeniedHandler { _, response, _ ->
-                sender.send(response, HttpStatus.FORBIDDEN)
-            }
+            it.authenticationEntryPoint { _, response, _ -> sender.send(response, HttpStatus.UNAUTHORIZED) }
+            it.accessDeniedHandler { _, response, _ -> sender.send(response, HttpStatus.FORBIDDEN) }
         }
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
