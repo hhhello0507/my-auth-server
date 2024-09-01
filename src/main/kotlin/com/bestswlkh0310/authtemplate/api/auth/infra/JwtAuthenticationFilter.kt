@@ -1,7 +1,7 @@
 package com.bestswlkh0310.authtemplate.api.auth.infra
 
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtPayloadKey
-import com.bestswlkh0310.authtemplate.api.core.token.TokenExtractor
+import com.bestswlkh0310.authtemplate.api.auth.utils.TokenExtractor
 import com.bestswlkh0310.authtemplate.internal.token.JwtClient
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

@@ -5,7 +5,6 @@ import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtPayloadKey
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtSecretKeyType
 import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.core.OAuth2Properties
 import io.jsonwebtoken.*
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -17,7 +16,6 @@ import javax.crypto.spec.SecretKeySpec
 @Component
 class JwtClient(
     private val jwtProperties: JwtProperties,
-    private val oAuth2Properties: OAuth2Properties,
 ) {
     fun payload(key: JwtPayloadKey, token: String, type: JwtSecretKeyType = JwtSecretKeyType.DEFAULT): String =
         parseToken(token, type).payload.get(key.key, String::class.java)

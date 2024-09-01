@@ -1,4 +1,4 @@
-package com.bestswlkh0310.authtemplate.internal.core
+package com.bestswlkh0310.authtemplate.internal.oauth2
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

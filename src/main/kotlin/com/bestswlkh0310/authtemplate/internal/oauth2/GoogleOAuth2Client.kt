@@ -1,7 +1,6 @@
 package com.bestswlkh0310.authtemplate.internal.oauth2
 
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.core.OAuth2Properties
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
