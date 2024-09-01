@@ -1,9 +1,8 @@
 package com.bestswlkh0310.authtemplate
 
-import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.PlatformType
 import com.bestswlkh0310.authtemplate.api.auth.data.req.*
 import com.bestswlkh0310.authtemplate.api.auth.data.res.TokenRes
-import com.bestswlkh0310.authtemplate.global.data.BaseRes
+import com.bestswlkh0310.authtemplate.api.core.data.BaseRes
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType

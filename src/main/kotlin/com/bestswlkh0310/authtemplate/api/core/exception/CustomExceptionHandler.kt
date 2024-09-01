@@ -1,6 +1,6 @@
-package com.bestswlkh0310.authtemplate.global.controlleradvice
+package com.bestswlkh0310.authtemplate.api.core.exception
 
-import com.bestswlkh0310.authtemplate.global.data.BaseVoidRes
+import com.bestswlkh0310.authtemplate.api.core.data.BaseVoidRes
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

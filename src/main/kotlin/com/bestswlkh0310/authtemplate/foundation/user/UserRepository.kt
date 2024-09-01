@@ -1,6 +1,6 @@
-package com.bestswlkh0310.authtemplate.core.user
+package com.bestswlkh0310.authtemplate.foundation.user
 
-import com.bestswlkh0310.authtemplate.core.user.entity.User
+import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.HttpStatus

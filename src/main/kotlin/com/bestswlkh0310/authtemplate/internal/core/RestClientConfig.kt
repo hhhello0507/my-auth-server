@@ -1,6 +1,5 @@
-package com.bestswlkh0310.authtemplate.global.config
+package com.bestswlkh0310.authtemplate.internal.core
 
-import com.bestswlkh0310.authtemplate.global.properties.OAuth2Properties
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,9 +11,7 @@ import org.springframework.web.client.RestClient
 annotation class GoogleOAuth2RestClient
 
 @Configuration
-class RestClientConfig(
-    private val oAuth2Properties: OAuth2Properties
-) {
+class RestClientConfig {
     @Bean
     @GoogleOAuth2RestClient
     fun googleOAuth2RestClient() = RestClient.builder()

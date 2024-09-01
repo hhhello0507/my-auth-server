@@ -1,7 +1,7 @@
-package com.bestswlkh0310.authtemplate.api.auth.jwt
+package com.bestswlkh0310.authtemplate.api.auth.infra
 
-import com.bestswlkh0310.authtemplate.core.user.UserRepository
-import com.bestswlkh0310.authtemplate.core.user.getByUsername
+import com.bestswlkh0310.authtemplate.foundation.user.UserRepository
+import com.bestswlkh0310.authtemplate.foundation.user.getByUsername
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 

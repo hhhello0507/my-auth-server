@@ -1,19 +1,18 @@
-package com.bestswlkh0310.authtemplate.global.filter
+package com.bestswlkh0310.authtemplate.api.core.exception
 
-import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.global.exception.ErrorResponseSender
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.stereotype.Component
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class JwtExceptionFilter(
+class HttpExceptionFilter(
     private val sender: ErrorResponseSender
 ): OncePerRequestFilter() {
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -21,10 +20,10 @@ class JwtExceptionFilter(
     ) {
         try {
             filterChain.doFilter(request, response)
-        } catch (exception: CustomException) {
-            sender.send(response, exception)
-        } catch (exception: Exception) {
-            sender.send(response, status = HttpStatus.INTERNAL_SERVER_ERROR)
+        } catch (e: HttpRequestMethodNotSupportedException) {
+            sender.send(response = response, status = HttpStatus.METHOD_NOT_ALLOWED)
+        } catch (e: HttpMessageNotReadableException) {
+            sender.send(response = response, status = HttpStatus.BAD_REQUEST)
         }
     }
 }

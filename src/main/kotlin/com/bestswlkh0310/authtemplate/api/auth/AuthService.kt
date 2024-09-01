@@ -2,14 +2,14 @@ package com.bestswlkh0310.authtemplate.api.auth
 
 import com.bestswlkh0310.authtemplate.api.auth.data.req.*
 import com.bestswlkh0310.authtemplate.api.auth.data.res.TokenRes
-import com.bestswlkh0310.authtemplate.internal.JwtClient
+import com.bestswlkh0310.authtemplate.internal.token.JwtClient
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtPayloadKey
-import com.bestswlkh0310.authtemplate.core.user.UserRepository
-import com.bestswlkh0310.authtemplate.core.user.entity.User
-import com.bestswlkh0310.authtemplate.core.user.getByUsername
-import com.bestswlkh0310.authtemplate.global.data.BaseRes
+import com.bestswlkh0310.authtemplate.foundation.user.UserRepository
+import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
+import com.bestswlkh0310.authtemplate.foundation.user.getByUsername
+import com.bestswlkh0310.authtemplate.api.core.data.BaseRes
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.GoogleOAuth2Client
+import com.bestswlkh0310.authtemplate.internal.oauth2.GoogleOAuth2Client
 import org.springframework.http.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service

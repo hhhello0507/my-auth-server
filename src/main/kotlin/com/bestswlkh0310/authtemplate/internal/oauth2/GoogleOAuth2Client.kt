@@ -1,15 +1,13 @@
-package com.bestswlkh0310.authtemplate.internal
+package com.bestswlkh0310.authtemplate.internal.oauth2
 
-import com.bestswlkh0310.authtemplate.global.config.GoogleOAuth2RestClient
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.global.properties.OAuth2Properties
+import com.bestswlkh0310.authtemplate.internal.core.OAuth2Properties
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestClient
 
 @Component
 class GoogleOAuth2Client(

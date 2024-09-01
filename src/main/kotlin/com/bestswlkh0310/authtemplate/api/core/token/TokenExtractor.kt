@@ -1,4 +1,4 @@
-package com.bestswlkh0310.authtemplate.global.config
+package com.bestswlkh0310.authtemplate.api.core.token
 
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
 import jakarta.servlet.http.HttpServletRequest

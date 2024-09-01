@@ -1,4 +1,4 @@
-package com.bestswlkh0310.authtemplate.global.data
+package com.bestswlkh0310.authtemplate.api.core.data
 
 data class BaseVoidRes(
     val status: Int,

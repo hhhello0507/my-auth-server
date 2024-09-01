@@ -1,7 +1,7 @@
-package com.bestswlkh0310.authtemplate.api.auth.jwt
+package com.bestswlkh0310.authtemplate.api.auth.infra
 
 
-import com.bestswlkh0310.authtemplate.core.user.entity.User
+import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 

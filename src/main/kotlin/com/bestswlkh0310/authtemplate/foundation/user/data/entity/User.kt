@@ -1,7 +1,7 @@
-package com.bestswlkh0310.authtemplate.core.user.entity
+package com.bestswlkh0310.authtemplate.foundation.user.data.entity
 
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.PlatformType
-import com.bestswlkh0310.authtemplate.core.user.UserRole
+import com.bestswlkh0310.authtemplate.foundation.user.data.enumeration.UserRole
 import jakarta.persistence.*
 
 @Entity(name = "`user`")

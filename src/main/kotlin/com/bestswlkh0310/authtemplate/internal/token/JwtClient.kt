@@ -1,12 +1,11 @@
-package com.bestswlkh0310.authtemplate.internal
+package com.bestswlkh0310.authtemplate.internal.token
 
 import com.bestswlkh0310.authtemplate.api.auth.data.res.TokenRes
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtPayloadKey
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtSecretKeyType
-import com.bestswlkh0310.authtemplate.core.user.entity.User
+import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.global.properties.JwtProperties
-import com.bestswlkh0310.authtemplate.global.properties.OAuth2Properties
+import com.bestswlkh0310.authtemplate.internal.core.OAuth2Properties
 import io.jsonwebtoken.*
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component

@@ -1,9 +1,7 @@
-package com.bestswlkh0310.authtemplate.global.config
+package com.bestswlkh0310.authtemplate.api.auth.infra
 
-import com.bestswlkh0310.authtemplate.global.filter.JwtAuthenticationFilter
-import com.bestswlkh0310.authtemplate.global.filter.JwtExceptionFilter
-import com.bestswlkh0310.authtemplate.global.exception.ErrorResponseSender
-import com.bestswlkh0310.authtemplate.global.filter.HttpExceptionFilter
+import com.bestswlkh0310.authtemplate.api.core.exception.HttpExceptionFilter
+import com.bestswlkh0310.authtemplate.api.core.exception.ErrorResponseSender
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
