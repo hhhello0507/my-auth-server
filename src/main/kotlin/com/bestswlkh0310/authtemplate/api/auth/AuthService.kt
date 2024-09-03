@@ -1,16 +1,21 @@
 package com.bestswlkh0310.authtemplate.api.auth
 
-import com.bestswlkh0310.authtemplate.api.auth.data.req.*
-import com.bestswlkh0310.authtemplate.api.auth.data.res.TokenRes
-import com.bestswlkh0310.authtemplate.internal.token.JwtClient
 import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.JwtPayloadKey
+import com.bestswlkh0310.authtemplate.api.auth.data.enumeration.PlatformType
+import com.bestswlkh0310.authtemplate.api.auth.data.req.OAuth2SignInReq
+import com.bestswlkh0310.authtemplate.api.auth.data.req.RefreshReq
+import com.bestswlkh0310.authtemplate.api.auth.data.req.SignInReq
+import com.bestswlkh0310.authtemplate.api.auth.data.req.SignUpReq
+import com.bestswlkh0310.authtemplate.api.auth.data.res.TokenRes
+import com.bestswlkh0310.authtemplate.api.core.data.BaseRes
 import com.bestswlkh0310.authtemplate.foundation.user.UserRepository
 import com.bestswlkh0310.authtemplate.foundation.user.data.entity.User
 import com.bestswlkh0310.authtemplate.foundation.user.getByUsername
-import com.bestswlkh0310.authtemplate.api.core.data.BaseRes
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
+import com.bestswlkh0310.authtemplate.internal.oauth2.AppleOAuth2Client
 import com.bestswlkh0310.authtemplate.internal.oauth2.GoogleOAuth2Client
-import org.springframework.http.*
+import com.bestswlkh0310.authtemplate.internal.token.JwtClient
+import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -20,6 +25,7 @@ class AuthService(
     private val userRepository: UserRepository,
     private val encoder: BCryptPasswordEncoder,
     private val googleOAuth2Client: GoogleOAuth2Client,
+    private val appleOAuth2Client: AppleOAuth2Client,
     private val jwtUtils: JwtClient
 ) {
     fun signUp(req: SignUpReq): BaseRes<TokenRes> {
@@ -72,21 +78,50 @@ class AuthService(
     }
 
     fun oAuth2SignIn(req: OAuth2SignInReq): BaseRes<TokenRes> {
+        val token = when (req.platformType) {
+            PlatformType.GOOGLE -> googleSignIn(req)
+            PlatformType.APPLE -> appleSignIn(req)
+            else -> throw CustomException(HttpStatus.BAD_REQUEST, "Invalid platform type")
+        }
+        return BaseRes.ok(
+            jwtUtils.generate(token)
+        )
+    }
+
+    private fun googleSignIn(req: OAuth2SignInReq): User {
         // validation
         val idToken = googleOAuth2Client.verifyIdToken(req.idToken)
-        val (username, name) = idToken.payload.let { listOf(it.email, it.subject) }
+        val username = idToken.payload.email
         val users = userRepository.findByUsername(username)
         val user = users.firstOrNull() ?: userRepository.save(
             User(
                 username = username,
                 password = null,
-                nickname = name,
+                nickname = req.nickname,
                 platformType = req.platformType
             )
         )
+        return user
+    }
 
-        return BaseRes.ok(
-            jwtUtils.generate(user)
+    private fun appleSignIn(req: OAuth2SignInReq): User {
+        val headers = appleOAuth2Client.parseHeader(idToken = req.idToken)
+        val keys = appleOAuth2Client.applePublicKeys()
+        val publicKey = appleOAuth2Client.generate(headers = headers, keys = keys)
+        val claims = appleOAuth2Client.extractClaims(idToken = req.idToken, publicKey = publicKey)
+        appleOAuth2Client.validateBundleId(claims = claims)
+
+
+        val username = claims["email"] as? String ?: throw CustomException(HttpStatus.BAD_REQUEST, "Invalid email")
+        val users = userRepository.findByUsername(username)
+        val user = users.firstOrNull() ?: userRepository.save(
+            User(
+                username = username,
+                password = null,
+                nickname = req.nickname,
+                platformType = req.platformType
+            )
         )
+        return user
     }
 }
