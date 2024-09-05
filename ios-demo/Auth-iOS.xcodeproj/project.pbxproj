@@ -21,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		253D063C2C89D2D90095FBF3 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		25DBD54C2C809FC500A0540E /* Auth-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Auth-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		25DBD54F2C809FC500A0540E /* Auth_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth_iOSApp.swift; sourceTree = "<group>"; };
 		25DBD5512C809FC500A0540E /* OAuth2TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TestView.swift; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 				25DBD55D2C80A01F00A0540E /* Info.plist */,
 				25DBD5532C809FC700A0540E /* Assets.xcassets */,
 				25DBD5552C809FC700A0540E /* Preview Content */,
+				253D063C2C89D2D90095FBF3 /* Config.xcconfig */,
 			);
 			path = "Auth-iOS";
 			sourceTree = "<group>";

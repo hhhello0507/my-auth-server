@@ -23,5 +23,10 @@ oauth2:
       ios: ${GOOGLE_CLIENT_ID_IOS} # TODO: Put your google client id for ios 
       web: ${GOOGLE_CLIENT_ID_WEB} # TODO: Put your google client id for web
     client-secret: ${GOOGLE_CLIENT_SECRET} # TODO: Put your google client secret
+    redirect-uri: http://localhost:8080/oauth2/code/google # TODO: Put your google redirect uri
+    token-uri: https://oauth2.googleapis.com/token
+    resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
+    grant-type: authorization_code
   apple:
-    bundle-id: ${APPLE_BUNDLE_ID}
+    grant-type: authorization_code
+    bundle-id: ${APPLE_BUNDLE_ID} # TODO: Put your apple bundle id

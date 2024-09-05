@@ -1,8 +1,9 @@
-package com.bestswlkh0310.authtemplate.internal.oauth2
+package com.bestswlkh0310.authtemplate.internal.oauth2.apple
 
-import com.bestswlkh0310.authtemplate.api.auth.data.res.ApplePublicKeyRes
-import com.bestswlkh0310.authtemplate.api.auth.data.res.ApplePublicKeysRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeyRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeysRes
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
+import com.bestswlkh0310.authtemplate.internal.oauth2.google.GoogleOAuth2Properties
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonMappingException
@@ -29,7 +30,7 @@ class AppleOAuth2Client(
     @Qualifier("apple")
     private val client: RestClient,
     private val objectMapper: ObjectMapper,
-    private val oAuth2Properties: OAuth2Properties
+    private val oAuth2Properties: GoogleOAuth2Properties
 ) {
     companion object {
         private const val IDENTITY_TOKEN_VALUE_DELIMITER: String = "\\."
@@ -106,8 +107,8 @@ class AppleOAuth2Client(
 
     fun validateBundleId(claims: Claims) {
         val aud = claims.audience.firstOrNull() ?: throw CustomException(HttpStatus.BAD_REQUEST, "Invalid claims")
-        if (aud != oAuth2Properties.appleBundleId) {
-            throw CustomException(HttpStatus.BAD_REQUEST, "Invalid bundle id")
-        }
+//        if (aud != oAuth2Properties.appleBundleId) {
+//            throw CustomException(HttpStatus.BAD_REQUEST, "Invalid bundle id")
+//        }
     }
 }

@@ -3,23 +3,22 @@ import GoogleSignIn
 import GoogleSignInSwift
 import Alamofire
 
-
-
 struct OAuth2TestView: View {
     var body: some View {
         VStack {
             GoogleSignInButton {
-                GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController!) { signInResult, error in
+                guard let rootViewController else {
+                    return
+                }
+                GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
                     if let error {
                         print(error)
                     }
-                    if let signInResult {
-                        dump(signInResult)
-                    }
-                    guard let idToken = signInResult?.user.idToken?.tokenString else {
-                        print("idToken not founded")
+                    guard let code = result?.serverAuthCode else {
                         return
                     }
+                    
+                    print(code)
                     
                     Task {
                         do {
@@ -28,7 +27,8 @@ struct OAuth2TestView: View {
                                 method: .post,
                                 parameters: OAuth2SignInReq(
                                     platformType: "GOOGLE",
-                                    idToken: idToken
+                                    code: code,
+                                    nickname: "wow"
                                 ),
                                 encoder: JSONParameterEncoder()
                             ).serializingDecodable(BaseRes<JwtInfoRes>.self).value

@@ -21,7 +21,8 @@ struct RefreshReq: Encodable {
 
 struct OAuth2SignInReq: Encodable {
     let platformType: String
-    let idToken: String
+    let code: String
+    let nickname: String
 }
 
 // MARK: - Response
