@@ -4,7 +4,6 @@ import com.bestswlkh0310.authtemplate.global.exception.CustomException
 import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleTokenRes
 import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleJWKSet
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter

@@ -94,7 +94,7 @@ class AuthService(
 
     private fun googleSignIn(req: OAuth2SignInReq): User {
         val token = googleOAuth2Client.getToken(code = req.code)
-        
+
         val verifiedIdToken = googleOAuth2Helper.verifyIdToken(idToken = token.idToken)
         val username = verifiedIdToken.payload.email
         val users = userRepository.findByUsername(username)
@@ -102,7 +102,7 @@ class AuthService(
             User(
                 username = username,
                 password = null,
-                nickname = req.nickname,
+                nickname = verifiedIdToken.payload["name"] as? String ?: "유저",
                 platformType = req.platformType
             )
         )
@@ -123,7 +123,7 @@ class AuthService(
             User(
                 username = username,
                 password = null,
-                nickname = req.nickname,
+                nickname = "",
                 platformType = req.platformType
             )
         )
