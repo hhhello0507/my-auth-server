@@ -1,10 +1,8 @@
 package com.bestswlkh0310.authtemplate.internal.oauth2.apple
 
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleOAuth2TokenRes
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeysRes
-import com.bestswlkh0310.authtemplate.internal.oauth2.google.data.res.GoogleOAuth2TokenRes
-import io.jsonwebtoken.JwsHeader
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleTokenRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleJWKSet
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
@@ -12,10 +10,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
-import org.springframework.web.client.body
 import org.springframework.web.client.toEntity
 import java.security.PrivateKey
 import java.security.Security
@@ -41,7 +37,7 @@ class AppleOAuth2Client(
                 .build()
         }
         .retrieve()
-        .toEntity<AppleOAuth2TokenRes>()
+        .toEntity<AppleTokenRes>()
         .body ?: throw CustomException(HttpStatus.BAD_REQUEST, "Apple client error")
 
     fun getPublicKeys() = restClient.get()
@@ -50,7 +46,7 @@ class AppleOAuth2Client(
                 .build()
         }
         .retrieve()
-        .toEntity(ApplePublicKeysRes::class.java)
+        .toEntity(AppleJWKSet::class.java)
         .body ?: throw CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Apple client error")
 
 
@@ -58,13 +54,17 @@ class AppleOAuth2Client(
         val expiration = LocalDateTime.now().plusMinutes(5)
 
         return Jwts.builder()
-            .setHeaderParam(JwsHeader.KEY_ID, properties.keyId)
+            .header()
+            .keyId(properties.keyId)
+            .and()
             .issuer(properties.teamId)
-            .setAudience(properties.audience)
+            .audience()
+            .add(properties.audience)
+            .and()
             .subject(properties.bundleId)
             .expiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
             .issuedAt(Date())
-            .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
+            .signWith(getPrivateKey(), Jwts.SIG.ES256)
             .compact()
     }
 

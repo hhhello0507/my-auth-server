@@ -1,30 +1,28 @@
 package com.bestswlkh0310.authtemplate.internal.oauth2.apple
 
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeyRes
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeysRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleJWKSet
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.*
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.JwtException
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.UnsupportedJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.math.BigInteger
-import java.security.*
+import java.security.KeyFactory
+import java.security.NoSuchAlgorithmException
+import java.security.PublicKey
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.RSAPublicKeySpec
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.*
 
 @Component
 class AppleOAuth2Helper(
     private val objectMapper: ObjectMapper,
-    private val properties: AppleOAuth2Properties
 ) {
 
     companion object {
@@ -50,7 +48,7 @@ class AppleOAuth2Helper(
         }
     }
     
-    fun generate(headers: Map<String, String>, keys: ApplePublicKeysRes): PublicKey {
+    fun generate(headers: Map<String, String>, keys: AppleJWKSet): PublicKey {
         val applePublicKey = keys.getMatchingKey(
             headers[SIGN_ALGORITHM_HEADER],
             headers[KEY_ID_HEADER]
@@ -58,7 +56,7 @@ class AppleOAuth2Helper(
         return generatePublicKey(applePublicKey)
     }
 
-    private fun generatePublicKey(applePublicKey: ApplePublicKeyRes): PublicKey {
+    private fun generatePublicKey(applePublicKey: AppleJWKSet.Keys): PublicKey {
         val nBytes: ByteArray = Base64.getUrlDecoder().decode(applePublicKey.n)
         val eBytes: ByteArray = Base64.getUrlDecoder().decode(applePublicKey.e)
 
