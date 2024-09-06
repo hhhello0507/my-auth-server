@@ -14,9 +14,9 @@
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>${GID_CLIENT_ID}</string>
+	<string>${GOOGLE_CLIENT_ID}</string>
 	<key>GIDServerClientID</key>
-	<string>${GID_SERVER_CLIENT_ID}</string>
+	<string>${GOOGLE_SERVER_CLIENT_ID}</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

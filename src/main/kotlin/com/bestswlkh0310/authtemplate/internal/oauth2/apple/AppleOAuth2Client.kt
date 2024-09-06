@@ -1,47 +1,50 @@
 package com.bestswlkh0310.authtemplate.internal.oauth2.apple
 
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeyRes
-import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeysRes
 import com.bestswlkh0310.authtemplate.global.exception.CustomException
-import com.bestswlkh0310.authtemplate.internal.oauth2.google.GoogleOAuth2Properties
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.JwtException
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.AppleOAuth2TokenRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.apple.data.res.ApplePublicKeysRes
+import com.bestswlkh0310.authtemplate.internal.oauth2.google.data.res.GoogleOAuth2TokenRes
+import io.jsonwebtoken.JwsHeader
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.UnsupportedJwtException
+import io.jsonwebtoken.SignatureAlgorithm
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
-import java.math.BigInteger
-import java.security.KeyFactory
-import java.security.NoSuchAlgorithmException
-import java.security.PublicKey
-import java.security.spec.InvalidKeySpecException
-import java.security.spec.RSAPublicKeySpec
+import org.springframework.web.client.body
+import org.springframework.web.client.toEntity
+import java.security.PrivateKey
+import java.security.Security
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 
 @Component
 class AppleOAuth2Client(
     @Qualifier("apple")
-    private val client: RestClient,
-    private val objectMapper: ObjectMapper,
-    private val oAuth2Properties: GoogleOAuth2Properties
+    private val restClient: RestClient,
+    private val properties: AppleOAuth2Properties,
 ) {
-    companion object {
-        private const val IDENTITY_TOKEN_VALUE_DELIMITER: String = "\\."
-        private const val HEADER_INDEX: Int = 0
+    
+    fun getToken(code: String) = restClient.post()
+        .uri {
+            it.path("/auth/token")
+                .queryParam("client_id", properties.bundleId)
+                .queryParam("client_secret", generateClientSecret())
+                .queryParam("grant_type", properties.grantType)
+                .queryParam("code", code)
+                .build()
+        }
+        .retrieve()
+        .toEntity<AppleOAuth2TokenRes>()
+        .body ?: throw CustomException(HttpStatus.BAD_REQUEST, "Apple client error")
 
-        private const val SIGN_ALGORITHM_HEADER: String = "alg"
-        private const val KEY_ID_HEADER: String = "kid"
-        private const val POSITIVE_SIGN_NUMBER: Int = 1
-    }
-
-    fun applePublicKeys() = client.get()
+    fun getPublicKeys() = restClient.get()
         .uri {
             it.path("/auth/keys")
                 .build()
@@ -50,65 +53,32 @@ class AppleOAuth2Client(
         .toEntity(ApplePublicKeysRes::class.java)
         .body ?: throw CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Apple client error")
 
-    fun parseHeader(idToken: String): Map<String, String> {
+
+    private fun generateClientSecret(): String {
+        val expiration = LocalDateTime.now().plusMinutes(5)
+
+        return Jwts.builder()
+            .setHeaderParam(JwsHeader.KEY_ID, properties.keyId)
+            .issuer(properties.teamId)
+            .setAudience(properties.audience)
+            .subject(properties.bundleId)
+            .expiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
+            .issuedAt(Date())
+            .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
+            .compact()
+    }
+
+    private fun getPrivateKey(): PrivateKey {
+        Security.addProvider(BouncyCastleProvider())
+        val converter = JcaPEMKeyConverter().setProvider("BC")
+
         try {
-            val encodedHeader: String = idToken.split(IDENTITY_TOKEN_VALUE_DELIMITER.toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .toTypedArray()[HEADER_INDEX]
-            val decodedHeader = String(Base64.getUrlDecoder().decode(encodedHeader))
-            return objectMapper.readValue(decodedHeader, object : TypeReference<Map<String, String>>() {})
-        } catch (e: JsonMappingException) {
-            throw RuntimeException("appleToken 값이 jwt 형식인지, 값이 정상적인지 확인해주세요.")
-        } catch (e: JsonProcessingException) {
-            throw RuntimeException("디코드된 헤더를 Map 형태로 분류할 수 없습니다. 헤더를 확인해주세요.")
+            val privateKeyBytes = Base64.getDecoder().decode(properties.privateKey)
+
+            val privateKeyInfo = PrivateKeyInfo.getInstance(privateKeyBytes)
+            return converter.getPrivateKey(privateKeyInfo)
+        } catch (e: Exception) {
+            throw java.lang.RuntimeException("Error converting private key from String", e)
         }
-    }
-
-
-    fun generate(headers: Map<String, String>, keys: ApplePublicKeysRes): PublicKey {
-        val applePublicKey = keys.getMatchingKey(
-            headers[SIGN_ALGORITHM_HEADER],
-            headers[KEY_ID_HEADER]
-        )
-        return generatePublicKey(applePublicKey)
-    }
-
-    private fun generatePublicKey(applePublicKey: ApplePublicKeyRes): PublicKey {
-        val nBytes: ByteArray = Base64.getUrlDecoder().decode(applePublicKey.n)
-        val eBytes: ByteArray = Base64.getUrlDecoder().decode(applePublicKey.e)
-
-        val n = BigInteger(POSITIVE_SIGN_NUMBER, nBytes)
-        val e = BigInteger(POSITIVE_SIGN_NUMBER, eBytes)
-        val rsaPublicKeySpec = RSAPublicKeySpec(n, e)
-
-        return try {
-            val keyFactory = KeyFactory.getInstance(applePublicKey.kty)
-            keyFactory.generatePublic(rsaPublicKeySpec)
-        } catch (exception: NoSuchAlgorithmException) {
-            throw java.lang.RuntimeException("잘못된 애플 키")
-        } catch (exception: InvalidKeySpecException) {
-            throw java.lang.RuntimeException("잘못된 애플 키")
-        }
-    }
-
-    fun extractClaims(idToken: String, publicKey: PublicKey): Claims = try {
-        Jwts.parser()
-            .verifyWith(publicKey)
-            .build()
-            .parseSignedClaims(idToken)
-            .payload
-    } catch (e: UnsupportedJwtException) {
-        throw UnsupportedJwtException("지원되지 않는 jwt 타입")
-    } catch (e: IllegalArgumentException) {
-        throw IllegalArgumentException("비어있는 jwt")
-    } catch (e: JwtException) {
-        throw JwtException("jwt 검증 or 분석 오류")
-    }
-
-    fun validateBundleId(claims: Claims) {
-        val aud = claims.audience.firstOrNull() ?: throw CustomException(HttpStatus.BAD_REQUEST, "Invalid claims")
-//        if (aud != oAuth2Properties.appleBundleId) {
-//            throw CustomException(HttpStatus.BAD_REQUEST, "Invalid bundle id")
-//        }
     }
 }

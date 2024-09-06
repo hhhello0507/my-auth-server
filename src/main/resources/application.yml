@@ -29,4 +29,8 @@ oauth2:
     grant-type: authorization_code
   apple:
     grant-type: authorization_code
-    bundle-id: ${APPLE_BUNDLE_ID} # TODO: Put your apple bundle id
+    bundle-id: ${APPLE_BUNDLE_ID} # ClientId, TODO: Put your apple bundle id
+    key-id: ${APPLE_KEY_ID}
+    team-id: ${APPLE_TEAM_ID}
+    audience: https://appleid.apple.com
+    private-key: ${APPLE_P8_KEY}

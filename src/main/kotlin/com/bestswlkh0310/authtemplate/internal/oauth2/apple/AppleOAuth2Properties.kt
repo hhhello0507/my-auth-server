@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component
 
 @Component
 class AppleOAuth2Properties(
-    @Value("\${oauth2.apple.bundle-id}") val appleBundleId: String,
-    @Value("\${oauth2.apple.grant-type}") val appleGrantType: String,
+    @Value("\${oauth2.apple.grant-type}") val grantType: String,
+    @Value("\${oauth2.apple.bundle-id}") val bundleId: String,
+    @Value("\${oauth2.apple.key-id}") val keyId: String,
+    @Value("\${oauth2.apple.team-id}") val teamId: String,
+    @Value("\${oauth2.apple.audience}") val audience: String,
+    @Value("\${oauth2.apple.private-key}") val privateKey: String,
 )

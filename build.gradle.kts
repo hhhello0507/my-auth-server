@@ -20,6 +20,9 @@ repositories {
 }
 
 dependencies {
+
+    implementation("org.bouncycastle:bcprov-jdk18on:1.75")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.75")
     
     val jwtVersion = "0.12.5"
     implementation("io.jsonwebtoken:jjwt-api:$jwtVersion")

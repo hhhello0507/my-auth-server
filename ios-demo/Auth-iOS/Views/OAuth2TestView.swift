@@ -2,8 +2,12 @@ import SwiftUI
 import GoogleSignIn
 import GoogleSignInSwift
 import Alamofire
+import AuthenticationServices
 
 struct OAuth2TestView: View {
+    
+    @StateObject private var appleObservable = AppleObservable()
+    
     var body: some View {
         VStack {
             GoogleSignInButton {
@@ -37,6 +41,31 @@ struct OAuth2TestView: View {
                             print(error)
                         }
                     }
+                }
+            }
+            
+            Button("apple sign in") {
+                appleObservable.signIn { code in
+                    print(code)
+                    Task {
+                        do {
+                            let response1 = try await API.session.request(
+                                "http://localhost:8080/auth/sign-in/oauth2",
+                                method: .post,
+                                parameters: OAuth2SignInReq(
+                                    platformType: "APPLE",
+                                    code: code,
+                                    nickname: "wow"
+                                ),
+                                encoder: JSONParameterEncoder()
+                            ).serializingDecodable(BaseRes<JwtInfoRes>.self).value
+                            print(response1)
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } failureCompletion: {
+                    
                 }
             }
         }
