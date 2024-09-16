@@ -10,7 +10,6 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.UnsupportedJwtException
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 import java.security.KeyFactory
@@ -22,7 +21,7 @@ import java.util.*
 
 @Component
 class AppleOAuth2Helper(
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapper
 ) {
 
     companion object {
@@ -86,12 +85,5 @@ class AppleOAuth2Helper(
         throw IllegalArgumentException("비어있는 jwt")
     } catch (e: JwtException) {
         throw JwtException("jwt 검증 or 분석 오류")
-    }
-
-    fun validateBundleId(claims: Claims) {
-        val aud = claims.audience.firstOrNull() ?: throw CustomException(HttpStatus.BAD_REQUEST, "Invalid claims")
-//        if (aud != oAuth2Properties.appleBundleId) {
-//            throw CustomException(HttpStatus.BAD_REQUEST, "Invalid bundle id")
-//        }
     }
 }

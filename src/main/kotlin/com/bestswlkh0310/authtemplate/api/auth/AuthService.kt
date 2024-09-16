@@ -95,14 +95,14 @@ class AuthService(
     private fun googleSignIn(req: OAuth2SignInReq): User {
         val token = googleOAuth2Client.getToken(code = req.code)
 
-        val verifiedIdToken = googleOAuth2Helper.verifyIdToken(idToken = token.idToken)
-        val username = verifiedIdToken.payload.email
+        val idToken = googleOAuth2Helper.verifyIdToken(idToken = token.idToken)
+        val username = idToken.payload.email
         val users = userRepository.findByUsername(username)
         val user = users.firstOrNull() ?: userRepository.save(
             User(
                 username = username,
                 password = null,
-                nickname = verifiedIdToken.payload["name"] as? String ?: "유저",
+                nickname = idToken.payload["name"] as? String ?: "유저",
                 platformType = req.platformType
             )
         )
@@ -115,15 +115,13 @@ class AuthService(
         val keys = appleOAuth2Client.getPublicKeys()
         val publicKey = appleOAuth2Helper.generate(headers = headers, keys = keys)
         val claims = appleOAuth2Helper.extractClaims(idToken = token.idToken, publicKey = publicKey)
-        appleOAuth2Helper.validateBundleId(claims = claims)
-
         val username = claims["email"] as? String ?: throw CustomException(HttpStatus.BAD_REQUEST, "Invalid email")
         val users = userRepository.findByUsername(username)
         val user = users.firstOrNull() ?: userRepository.save(
             User(
                 username = username,
                 password = null,
-                nickname = "",
+                nickname = req.nickname ?: "유저",
                 platformType = req.platformType
             )
         )
