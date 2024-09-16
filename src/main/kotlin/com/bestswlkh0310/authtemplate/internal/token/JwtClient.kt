@@ -24,15 +24,15 @@ class JwtClient(
         try {
             parser(type).parseSignedClaims(token)
         } catch (e: ExpiredJwtException) {
-            throw CustomException(HttpStatus.FORBIDDEN, "token expired")
+            throw CustomException(HttpStatus.FORBIDDEN, "expired jwt")
         } catch (e: SignatureException) {
-            throw CustomException(HttpStatus.UNAUTHORIZED, "invalid token")
+            throw CustomException(HttpStatus.UNAUTHORIZED, "invalid signature")
         } catch (e: MalformedJwtException) {
-            throw CustomException(HttpStatus.UNAUTHORIZED, "invalid token")
+            throw CustomException(HttpStatus.UNAUTHORIZED, "malformed jwt")
         } catch (e: UnsupportedJwtException) {
-            throw CustomException(HttpStatus.UNAUTHORIZED, "invalid token")
+            throw CustomException(HttpStatus.UNAUTHORIZED, "unsupported jwt")
         } catch (e: IllegalArgumentException) {
-            throw CustomException(HttpStatus.UNAUTHORIZED, "invalid token")
+            throw CustomException(HttpStatus.UNAUTHORIZED, "illegal argument error (jwt)")
         } catch (e: Exception) {
             throw CustomException(HttpStatus.UNAUTHORIZED, "invalid token")
         }
