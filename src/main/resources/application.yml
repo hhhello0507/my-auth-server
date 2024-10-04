@@ -15,8 +15,8 @@ spring:
 jwt:
   secret: ${JWT_SECRET} # Put your jwt secret
   expired:
-    access: 3600
-    refresh: 300000
+    access: 3_600_000
+    refresh: 300_000_000
 oauth2:
   google:
     client-id:
